@@ -1,0 +1,176 @@
+import jwt from "jsonwebtoken";
+import { userSocketIDs } from "../index.js";
+import { v4 as uuid } from "uuid";
+import { cloudinary } from "../utils/cloudinaryconfig.js";
+import path from "path";
+
+const isProduction = process.env.NODE_ENV === 'PRODUCTION';
+
+const cookieOptions = {
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+  sameSite: isProduction ? "none" : "lax", 
+  httpOnly: true,
+  secure: isProduction, 
+  path: '/', 
+};
+
+
+function sendToken(res, savedUserData) {
+  const token = jwt.sign({ _id: savedUserData._id }, process.env.JWT_SECRET);
+  return res.status(201).cookie("synqchat-token", token, cookieOptions).json({
+    success: true,
+    token,
+    savedUserData,
+  }); 
+}
+
+const getSockets = (users = []) => {
+  const sockets = users.map((user) => userSocketIDs.get(user.toString()));
+  return sockets;
+};
+
+
+const getBase64 = (file) => {
+  return `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
+};
+
+function formatFileSize(bytes) {
+  let size, unit;
+
+  if (bytes < 1024) {
+    size = bytes;
+    unit = "B";
+  } else if (bytes < 1024 * 1024) {
+    size = bytes / 1024;
+    unit = "KB";
+  } else {
+    size = bytes / (1024 * 1024);
+    unit = "MB";
+  }
+
+  size = size % 1 === 0 ? size.toFixed(0) : size.toFixed(2);
+  return `${size} ${unit}`;
+}
+
+// Upload multiple files to Cloudinary manually
+export const uploadFilesToCloudinary = async (files = []) => {
+  const uploadPromises = files.map((file) => {
+    let resourceType = "raw"; // default fallback
+    let fileType = "raw";
+
+    if (file.mimetype.startsWith("image/")) {
+      resourceType = "image";
+      fileType = "image";
+    } else if (
+      file.mimetype.startsWith("video/") ||
+      file.mimetype.startsWith("audio/")
+    ) {
+      resourceType = "video"; // Cloudinary puts video + audio under "video"
+      fileType = file.mimetype.startsWith("audio/") ? "audio" : "video";
+    } else {
+      resourceType = "raw"; // pdf, excel, docs, zips...
+      fileType = "raw";
+    }
+
+    const ext = path.extname(file.originalname).toLowerCase();
+
+    return new Promise((resolve, reject) => {
+      cloudinary.uploader.upload(
+        getBase64(file),
+        {
+          resource_type: resourceType,
+          public_id: ext == ".pdf" ? uuid() : `${uuid()}${ext}`,
+          type: "upload",
+        },
+        (error, result) => {
+          if (error) return reject(error);
+          resolve({ ...result, fileType, filename: file.originalname });
+        }
+      );
+    });
+  });
+
+  try {
+    const results = await Promise.all(uploadPromises);
+    const formattedResults = results.map((result) => ({
+      public_id: result.public_id,
+      url: result.secure_url,
+      fileType: result.fileType,
+      fileSize: formatFileSize(result.bytes),
+      filename: result.filename,
+    }));
+    return formattedResults;
+  } catch (err) {
+    throw new Error("Error uploading files to cloudinary", err);
+  }
+};
+
+function modifyMessage(messages, userId) {
+  return messages.map((msg) => {
+    const isTextDeletedForMe = msg.textDeletedFor?.some(
+      (u) => String(u) === String(userId)
+    );
+
+    
+    const filteredAttachments = (msg.attachments || []).filter((att) => {
+      const deletedForUser = att.deletedFor?.some(
+        (u) => String(u) === String(userId)
+      );
+     
+      return !deletedForUser;
+    });
+
+    // Now build what the client expects
+    return {
+      _id: msg._id,
+      chat: msg.chat,
+      sender: msg.sender,
+      messageType: msg.messageType,
+      createdAt: msg.createdAt,
+      updatedAt: msg.updatedAt,
+      status: msg.status,
+      deliveredTo: msg.deliveredTo,
+      readBy: msg.readBy,
+      // keep flags intact !
+      textDeletedForEveryone: msg.textDeletedForEveryone,
+      textDeletedFor: msg.textDeletedFor,
+
+     
+      attachments: filteredAttachments,
+      text:
+        msg.textDeletedForEveryone || isTextDeletedForMe
+          ? "" 
+          : msg.text,
+    };
+  });
+}
+
+const areIdsEqual = (id1, id2) => id1?.toString() === id2?.toString();
+
+function getLastMessagePreview(message, userId) {
+  const { text, textDeletedForEveryone, textDeletedFor, attachments } = message;
+
+  const textVisible =
+    text && !textDeletedForEveryone && !textDeletedFor.includes(userId);
+
+  const anyAttachmentVisible = attachments.some(
+    (a) => !a.deletedForEveryone && !a.deletedFor.includes(userId)
+  );
+
+  if (textVisible) return text;
+
+  if (anyAttachmentVisible) return "Attachment";
+  if (textDeletedForEveryone || attachments.some((a) => a.deletedForEveryone)) {
+    return "This message was deleted";
+  }
+
+  return false;
+}
+
+export {
+  cookieOptions,
+  sendToken,
+  modifyMessage,
+  areIdsEqual,
+  getLastMessagePreview,
+};
