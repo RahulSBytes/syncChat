@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@layer base {
+  :root {
+    --accent-color: #1F744E; 
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 2.5s linear infinite;
+}
+
+body{
+    margin: 0;
+    padding: 0;
+    /* height: 100%;
+    width: 100%; */
+    box-sizing: border-box;
+}
+
+html{
+        height: 100%;
+    width: 100%;
+}
+
+
+.tooltip.tooltip-sm::after {
+  background-color: #fff;
+  color: black;
+}
+.tooltip.tooltip-sm::before {
+  font-size: 0.6rem; 
+  background-color: #fff;
+  color: black;
+}
+
+
+
+
+/* typing indicator */
+
+/* .typingIndicatorContainer {
+  display: flex;
+  flex: none;
+  align-items: flex-end;
+  margin: 0;
+} */
+
+.typingIndicatorBubble {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+}
+
+.typingIndicatorBubbleDot {
+  width: 5px;
+  height: 5px;
+  margin-right: 4px;
+  background-color: #57585a;
+  border-radius: 50%;
+  animation-name: bounce;
+  animation-duration: 1.3s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.typingIndicatorBubbleDot:nth-of-type(2) {
+  animation-delay: 0.15s;
+}
+
+.typingIndicatorBubbleDot:nth-of-type(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes bounce {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-4px);
+  }
+}
+
+/* typing indicator */
+
+
+.noScrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
+
+.noScrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
