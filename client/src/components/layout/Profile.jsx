@@ -1,4 +1,3 @@
-// profile.js
 import { ArrowUpRight, ChevronRight, Clapperboard,  FileMinus, Headphones, Image, PencilLine, Play } from 'lucide-react'
 import { useAuthStore } from '../../store/authStore.js';
 import { useChatStore } from '../../store/chatStore.js';
@@ -25,7 +24,7 @@ function Details({ mobileStyle }) {
         const allAttachments = messagesRelatedToChat
             .map((message) => message.attachments)
             .flat()
-            .filter(Boolean); // Filter out null/undefined attachments
+            .filter(Boolean);
 
 
         const groups = {
@@ -81,9 +80,9 @@ function Details({ mobileStyle }) {
         },
     ]
 
-    const socket = getSocket()
+    // const socket = getSocket()
     const leaveGroup = useApiStore(state => state.leaveGroup)
-    const fetchMessages = useApiStore(state => state.fetchMessages)
+    // const fetchMessages = useApiStore(state => state.fetchMessages)
 
 
     if (!contacts || !currentSelectedChatId) {

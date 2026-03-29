@@ -1,4 +1,3 @@
-// ShowProfileAttachmentList.jsx
 import { X, Play, Pause, Download, FileText, File, Eye, Music, Video, Image as ImageIcon } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { textFiles } from '../constants/constants';
@@ -16,7 +15,7 @@ function ShowProfileAttachmentList({ files, onClose }) {
         if (typeof size === 'string') {
             return size;
         }
-        // If size is a number, format it
+        
         if (typeof size === 'number') {
             const sizeInMB = (size / (1024 * 1024)).toFixed(2);
             return `${sizeInMB} MB`;
@@ -122,7 +121,7 @@ function ShowProfileAttachmentList({ files, onClose }) {
         }
     };
 
-    // Cleanup audio references
+    
     useEffect(() => {
         return () => {
             Object.values(audioRefs.current).forEach(audio => {
@@ -134,7 +133,7 @@ function ShowProfileAttachmentList({ files, onClose }) {
         };
     }, []);
 
-    // Document viewer component
+    
     const DocumentViewer = ({ attachment }) => {
         const [content, setContent] = useState(null);
         const [loading, setLoading] = useState(true);
@@ -146,7 +145,6 @@ function ShowProfileAttachmentList({ files, onClose }) {
                 ? attachment.filename.split('.').pop().toLowerCase()
                 : '';
 
-            // console.log("extensionnn :: ", extension)
 
             const textBasedFiles = textFiles;
             const officeDocs = ['doc', 'docx', 'ppt', 'pptx', 'pdf'];
@@ -307,7 +305,6 @@ function ShowProfileAttachmentList({ files, onClose }) {
                         </button>
                     </div>
 
-                    {/* Files list - scrollable */}
                     <div className="flex-1 overflow-y-auto p-4 space-y-2">
                         {files.length === 0 ? (
                             <div className="text-center text-placeholder-txt py-8">
@@ -320,7 +317,6 @@ function ShowProfileAttachmentList({ files, onClose }) {
                                     className="flex items-center gap-3 p-3 hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-lg cursor-pointer transition-colors"
                                     onClick={(e) => handleFileView(file, e)}
                                 >
-                                    {/* Preview/Icon */}
                                     <div className="flex-shrink-0 w-12 h-12 rounded overflow-hidden bg-gray-700 flex items-center justify-center">
                                         {file.fileType === 'image' ? (
                                             <img
@@ -344,13 +340,12 @@ function ShowProfileAttachmentList({ files, onClose }) {
                                         )}
                                     </div>
 
-                                    {/* File info */}
+                                  
                                     <div className="flex-1 min-w-0">
                                         <p className="text-secondary dark:text-secondary-dark text-sm truncate font-medium">{file.filename || 'Unnamed file'}</p>
                                         <p className="text-gray-500 text-xs">{formatFileSize(file.fileSize)}</p>
                                     </div>
 
-                                    {/* Action buttons */}
                                     <div className="flex items-center gap-2">
                                         {file.fileType === 'audio' && (
                                             <button

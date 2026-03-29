@@ -11,7 +11,7 @@ import ToggleSwitch from '../components/shared/ToggleSwitch.jsx';
 
 export default function PrivacyTab() {
 
-  if(true) return <div className='text-secondary dark:text-secondary-dark text-center'>This section is currently being improved. Updates will be available soon.</div>
+  // if(true) return <div className='text-secondary dark:text-secondary-dark text-center'>This section is currently being improved. Updates will be available soon.</div>
 
 
   const { onPasswordModal } = useOutletContext();

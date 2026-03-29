@@ -1,4 +1,4 @@
-// settings/modals/PasswordModal.jsx
+
 import { useForm } from 'react-hook-form';
 import { Eye, EyeOff, X } from 'lucide-react';
 import { useState } from 'react';

@@ -14,6 +14,8 @@ export default function MobileNavbar() {
     setIsNotificationClicked 
   } = useUIStore();
 
+  const navigate = useNavigate();
+
   const handleMenuAction = (action) => {
     setShowMobileMenu(false);
     
@@ -38,15 +40,11 @@ export default function MobileNavbar() {
     }
   };
 
-  const handleBack = () => {
-    navigate('/');
-  };
-
+  
   return (
     <>
       <nav className="bg-gray-800 border-b border-gray-700 px-4 py-3 flex-shrink-0">
         <div className="flex items-center justify-between">
-          {/* Left Side */}
           <div className="flex items-center">
             {chatId ? ( <p></p>
               
@@ -64,7 +62,7 @@ export default function MobileNavbar() {
             </h1>
           </div>
 
-          {/* Right Side */}
+
           <div className="flex items-center space-x-2">
             {!chatId && (
               <button
@@ -78,7 +76,7 @@ export default function MobileNavbar() {
         </div>
       </nav>
 
-      {/* Mobile Menu Dropdown */}
+
       {showMobileMenu && !chatId && (
         <div className="absolute top-full left-0 right-0 bg-gray-800 border-b border-gray-700 z-50 px-4 py-2">
           <div className="space-y-1">

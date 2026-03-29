@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useForm } from "react-hook-form"
 import { useAuthStore } from '../../store/authStore.js';
 import useMeta from '../../hooks/useMeta.js';
@@ -7,9 +7,8 @@ import { Eye, EyeOff, KeyRound, User } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 
-
 function Login() {
-  useMeta({ title: "login", description: "this is the login page" })
+  useMeta({ title: "login", description: "this is the login page"})
   const navigate = useNavigate();
 
   const [passSeen, setPassSeen] = useState(false);
@@ -18,9 +17,6 @@ function Login() {
   const [loggingIn, setLoggingIn] = useState(false)
 
   const handleLogin = async (param) => {
-
-    console.log("login param",param)
-
     setLoggingIn(true)
     const success = await login(param);
     setLoggingIn(false)
@@ -28,6 +24,7 @@ function Login() {
       toast.success(success.message);
       navigate("/", { replace: true });
     } else {
+     
       toast.error(success.message || "Error logging in");
     }
   };
@@ -41,7 +38,6 @@ function Login() {
       >
         <h2 className="text-2xl font-semibold">Login</h2>
 
-        {/* Username */}
         <label className="input validator w-full flex items-center gap-2">
           <User size={16} strokeWidth={1} />
           <input
@@ -57,7 +53,6 @@ function Login() {
           <p className="text-red-500 text-sm">{loginForm.formState.errors.username.message}</p>
         )}
 
-        {/* Password */}
         <label className="input validator w-full flex items-center gap-2">
           <KeyRound size={16} strokeWidth={1} />
           <input

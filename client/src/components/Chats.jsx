@@ -19,12 +19,11 @@ import { server } from '../constants/config.js';
 import MessageStatus from './minicomponents/MessageStatus.jsx';
 import { useAutoMarkRead } from '../hooks/useAutoMarkRead.js';
 import { useAutoMarkDelivered } from '../hooks/useAutoMarkDelivered.js';
-import usePreferencesStore from '../store/usePreferencesStore.js';
 
 function Chats() {
   const { onlineUsers } = useOutletContext();
 
-  // ✅ All state/hooks at the top (always called)
+  // All state/hooks at the top (always called)
   const [sending, setSending] = useState(false);
   const [isEmojiOpen, setIsEmojiOpen] = useState(false);
   const [isAttachmentOpen, setIsAttachmentOpen] = useState(false);
@@ -47,11 +46,8 @@ function Chats() {
 
   const user = useAuthStore((state) => state.user);
   const {
-    cancelUpload,
     isSendingMessage,
-    progress,
     contacts,
-    updateChat,
     resetUnreadCount,
     updateContactUnreadCount,
     updateMessageStatuses,
@@ -63,35 +59,35 @@ function Chats() {
     updateContactsList,
     fetchContact
   } = useApiStore();
-  const preferences = usePreferencesStore(state => state.preferences)
+  // const preferences = usePreferencesStore(state => state.preferences)
   const currentSelectedChatId = useChatStore((state) => state.currentSelectedChatId);
   const darkMode = useChatStore((state) => state.darkMode);
-  // ✅ Auto-mark delivered when messages load
-  // useAutoMarkDelivered(currentSelectedChatId);
+  // Auto-mark delivered when messages load
+  useAutoMarkDelivered(currentSelectedChatId);
 
-  // ✅ Auto-mark read when chat is visible
+  // Auto-mark read when chat is visible
   useAutoMarkRead(currentSelectedChatId, true);
   const navigate = useNavigate();
   const socket = getSocket();
 
   const chatInfo = contacts?.find((el) => el._id == currentSelectedChatId);
 
-  // ✅ Call hook unconditionally with safe fallbacks
+  // Call hook unconditionally with safe fallbacks
   const { startTyping, stopTyping } = useTypingIndicator(
     chatInfo?._id || null,
     chatInfo?.members || []
   );
 
-  // ✅ All useEffect hooks (always called)
+  // All useEffect hooks (always called)
   useEffect(() => {
     function handleClickOutside(e) {
-      // ✅ Exclude button from "outside" check
+      // Exclude button from "outside" check
       if (
         isEmojiOpen &&
         emojiRef.current &&
         !emojiRef.current.contains(e.target) &&
         emojiButtonRef.current &&
-        !emojiButtonRef.current.contains(e.target) // ✅ Key fix
+        !emojiButtonRef.current.contains(e.target) 
       ) {
         setIsEmojiOpen(false);
       }
@@ -144,17 +140,13 @@ function Chats() {
 
   useSocketEvents(socket, {
     [NEW_MESSAGE]: async (data) => {
-
-      console.log("new message data :: ", data)
-
       const isMyMessage = data.sender._id === user._id;
       const isCurrentChat = data.chat === currentSelectedChatId;
 
 
-      // ✅ 1. Mark as delivered (if not sent by me)
       if (!isMyMessage) {
         try {
-          const res = await axios.put(
+          await axios.put(
             `${server}/api/v1/chats/delivered/${data.chat}`,
             {},
             { withCredentials: true }
@@ -166,10 +158,9 @@ function Chats() {
 
       try {
         if (isCurrentChat) {
-          // Add message to current chat
+
           addMessageFromSocket(data);
 
-          // Mark as read after short delay (if not my message)
           if (!isMyMessage) {
             setTimeout(() => {
               axios.put(
@@ -186,11 +177,11 @@ function Chats() {
 
     },
 
-    [MESSAGE_DELIVERED]: ({ chatId, messageIds, deliveredBy }) => {
+    [MESSAGE_DELIVERED]: ({ messageIds }) => {
       updateMessageStatuses(messageIds, "delivered");
     },
 
-    [MESSAGE_READ]: ({ chatId, messageIds, readBy }) => {
+    [MESSAGE_READ]: ({ messageIds }) => {
       updateMessageStatuses(messageIds, "read");
     },
 
@@ -231,17 +222,17 @@ function Chats() {
 
 
 
-  // ✅ Render loading state in JSX, not early return
+  // Render loading state in JSX, not early return
   if (!chatInfo || !user) {
     return <div>Loading...</div>;
   }
 
-  // ✅ Now safe to destructure (chatInfo is guaranteed to exist)
+  // Now safe to destructure (chatInfo is guaranteed to exist)
   let { _id: otherUserId, fullName, avatar } = chatInfo.members.find((el) => el._id != user._id) || {};
   if (chatInfo.groupChat) fullName = chatInfo.name;
 
 
-  let isDeleteForEveryone = false;
+  // let isDeleteForEveryone = false;
   async function handleDeleteMessage(messageId, messageInfo, isDeleteForEveryone) {
     const endpoint = isDeleteForEveryone
       ? `${server}/api/v1/chats/${messageId}/delete-for-everyone`
@@ -458,7 +449,7 @@ function Chats() {
                           <div className="flex flex-col text-sm">
                             <button className="px-4 py-2 hover:bg-[#689969] text-left"
                               onClick={() => {
-                                handleDeleteMessage(contextMenu.messageId, contextMenu.data, isDeleteForEveryone = false);
+                                handleDeleteMessage(contextMenu.messageId, contextMenu.data, false);
                                 setContextMenu({ visible: false, messageId: null, x: 0, y: 0, data: null });
                               }}>
                               Delete for me
@@ -466,7 +457,7 @@ function Chats() {
                             {haveYouBlocked && sender._id === user._id && (
                               <button className="px-4 py-2 hover:bg-[#689969] text-left"
                                 onClick={() => {
-                                  handleDeleteMessage(contextMenu.messageId, contextMenu.data, isDeleteForEveryone = true);
+                                  handleDeleteMessage(contextMenu.messageId, contextMenu.data, true);
                                   setContextMenu({ visible: false, messageId: null, x: 0, y: 0, data: null });
                                 }}>
                                 Delete for everyone
@@ -501,7 +492,7 @@ function Chats() {
       {haveYouBlocked && <div className='sticky bottom-0 bg-surface dark:bg-surface-dark pt-2 pb-4 px-3 w-full border-t border-placeholder-txt'>
         {isEmojiOpen && (
           <div ref={emojiRef} className="absolute bottom-full left-0 w-full z-20">
-            <EmojiPicker theme={darkMode ? "dark" : "light"} onEmojiClick={onEmojiSelect} height={200} width='100%' 
+            <EmojiPicker theme={darkMode ? "dark" : "light"} onEmojiClick={onEmojiSelect} height={200} width='100%'
               previewConfig={{ showPreview: false }} searchDisabled={true} skinTonesDisabled={true} />
           </div>
         )}
@@ -523,7 +514,7 @@ function Chats() {
                 </span>
                 <span onClick={() => handleFileSelect('*/*')}
                   className='text-secondary dark:text-secondary-dark bg-zinc-200 dark:bg-zinc-500 hover:bg-zinc-400 justify-start px-3 py-2 flex text-sm  gap-2 items-center w-full rounded cursor-pointer'>
-                  <FileText size={14}  />Documents
+                  <FileText size={14} />Documents
                 </span>
               </div>
             )}

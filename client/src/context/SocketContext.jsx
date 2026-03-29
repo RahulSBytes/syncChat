@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, useEffect } from "react";
+import { createContext, useContext, useMemo} from "react";
 import { io } from "socket.io-client";
 
 const server = import.meta.env.VITE_SERVER || "http://localhost:8080";

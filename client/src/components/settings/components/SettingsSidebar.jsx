@@ -1,4 +1,3 @@
-// settings/components/SettingsSidebar.jsx
 import { User, Palette, Shield, Settings as SettingsIcon, LogOut, ChevronLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../../store/authStore';

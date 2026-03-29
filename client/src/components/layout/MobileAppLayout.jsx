@@ -6,7 +6,7 @@ import CreateGroupForm from "../CreateGroupForm.jsx";
 import FindDialog from "../FindDialog.jsx";
 import Notification from "../Notification.jsx";
 import { Outlet, useParams } from "react-router-dom";
-import { useChatStore } from "../../store/chatStore.js";
+// import { useChatStore } from "../../store/chatStore.js";
 import { useState } from "react";
 import useSocketEvents from "../../hooks/useSocketEvents.js";
 import { getSocket } from "../../context/SocketContext.jsx";
@@ -16,7 +16,7 @@ import { useAuthStore } from "../../store/authStore.js";
 export default function MobileAppLayout() {
   const user = useAuthStore((state) => state.user);
   const { isNewGroupClicked, isSearchPeopleClicked, isNotificationClicked } = useUIStore();
-  const currentSelectedChatId = useChatStore((state) => state.currentSelectedChatId);
+  // const currentSelectedChatId = useChatStore((state) => state.currentSelectedChatId);
   const socket = getSocket();
 
   const { id: chatId } = useParams();
@@ -33,7 +33,6 @@ export default function MobileAppLayout() {
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
-      {/* Modals - same as desktop */}
       {isNewGroupClicked && <CreateGroupForm />}
       {isSearchPeopleClicked && <FindDialog />}
       {isNotificationClicked && <Notification />}

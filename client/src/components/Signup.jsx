@@ -6,13 +6,12 @@ import axios from 'axios'
 import { server } from '../constants/config.js';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore.js';
-import { useEffect } from 'react';
 import toast from 'react-hot-toast';
 
 
 function Login() {
 
-  
+
   useMeta({ title: "signup", description: "this is the login page" })
   const [loggingIn, setLoggingIn] = useState(false)
   const navigate = useNavigate();
@@ -20,7 +19,6 @@ function Login() {
 
   const [passSeen, setPassSeen] = useState(false);
   const avatar = signupForm.watch("avatar");
-  const user = useAuthStore(state => state.user);
   const userExists = useAuthStore(state => state.userExists);
 
   const handleSignup = async (param) => {
@@ -28,7 +26,6 @@ function Login() {
       setLoggingIn(true)
       const { bio, username, fullName, password, email, avatar } = param;
       const formData = new FormData()
-      // Add text fields
       formData.append('bio', bio)
       formData.append('email', email)
       formData.append('fullName', fullName)
@@ -48,7 +45,7 @@ function Login() {
 
       userExists(data.savedUserData)
       navigate('/')
-    } catch (error) {
+    } catch (err) {
       setLoggingIn(false)
       toast.error("error signing up")
     }
@@ -62,7 +59,6 @@ function Login() {
       >
         <h2 className="text-2xl font-semibold">Sign up</h2>
 
-        {/* Avatar Upload */}
         <div className="relative">
           <img
             className="bg-zinc-400 w-24 h-24 rounded-full object-cover"
@@ -94,7 +90,6 @@ function Login() {
         </div>
         {signupForm.formState.errors.avatar && <p className="text-red-500 text-sm">{signupForm.formState.errors.avatar.message}</p>}
 
-        {/* Username */}
         <label className="input validator w-full flex items-center gap-2">
           <User size={16} strokeWidth={1} />
           <input
@@ -109,8 +104,6 @@ function Login() {
         </label>
         {signupForm.formState.errors.fullName && <p className="text-red-500 text-sm">{signupForm.formState.errors.fullName.message}</p>} {/* Fixed: FullName to fullName */}
 
-
-        {/* Username */}
         <label className="input validator w-full flex items-center gap-2">
           <User size={16} strokeWidth={1} />
           <input
@@ -130,7 +123,6 @@ function Login() {
         </label>
         {signupForm.formState.errors.username && <p className="text-red-500 text-sm">{signupForm.formState.errors.username.message}</p>}
 
-        {/* Bio */}
         <label className="input w-full flex items-center gap-2">
           <File size={16} strokeWidth={1} />
           <input
@@ -141,7 +133,6 @@ function Login() {
           />
         </label>
 
-        {/* Email */}
         <label className="input validator w-full flex items-center gap-2">
           <Mail size={16} strokeWidth={1} />
           <input
@@ -156,7 +147,6 @@ function Login() {
         </label>
         {signupForm.formState.errors.email && <p className="text-red-500 text-sm">{signupForm.formState.errors.email.message}</p>}
 
-        {/* Password */}
         <label className="input validator w-full flex items-center gap-2">
           <KeyRound size={16} strokeWidth={1} />
           <input
@@ -177,8 +167,6 @@ function Login() {
           </span>
         </label>
         {signupForm.formState.errors.password && <p className="text-red-500 text-sm">{signupForm.formState.errors.password.message}</p>}
-
-        {/* Submit */}
 
         <button className="btn w-full">
           {loggingIn ? <span className="loading loading-spinner text-zinc-500"></span>

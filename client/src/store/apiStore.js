@@ -22,14 +22,12 @@ export const useApiStore = create(
     updateMessageDeletionFromSocket: (data) => {
       set((state) => ({
         messagesRelatedToChat: state.messagesRelatedToChat.map((msg) => {
-          console.log(msg._id === data._id, msg._id, data._id);
           return msg._id === data._id ? data : msg;
         }),
       }));
     },
 
     addMessageFromSocket: (newMessage) => {
-      console.log("newMessage ::", newMessage);
       const { messagesRelatedToChat } = get();
       if (messagesRelatedToChat.some((m) => m._id === newMessage._id)) return;
       set({ messagesRelatedToChat: [...messagesRelatedToChat, newMessage] });
@@ -90,7 +88,6 @@ export const useApiStore = create(
     // ######## count related methods
 
     fetchContact: async () => {
-console.log("fetching contacts")
 
       const [data, error] = await apiRequest(
         axios.get(`${server}/api/v1/chats`, { withCredentials: true })
@@ -141,7 +138,7 @@ console.log("fetching contacts")
     },
 
     removeMemberFromGroup: async (chatId, memberId) => {
-      const [data, error] = await apiRequest(
+      const [_, error] = await apiRequest(
         axios.patch(
           `${server}/api/v1/chats/removemember`,
           { chatId, memberId },
@@ -153,25 +150,25 @@ console.log("fetching contacts")
     },
 
     addMemberInGroup: async (chatId, username) => {
-      const [data, error] = await apiRequest(
+      const [_, error] = await apiRequest(
         axios.patch(
           `${server}/api/v1/chats/addmember`,
           { chatId, username },
           { withCredentials: true }
         )
       );
-      // console.log(error)
       return error ? false : true;
     },
 
     sendMessage: async (formData, currentSelectedChatId) => {
-      const [data, error] = await apiRequest(
+      const [_, error] = await apiRequest(
         axios.post(
           `${server}/api/v1/chats/sendMessage/${currentSelectedChatId}`,
           formData,
           { withCredentials: true }
         )
       );
+
       return error ? false : true;
     },
 
@@ -185,14 +182,13 @@ console.log("fetching contacts")
     },
 
     handleInvite: async (userId) => {
-      const [data, error] = await apiRequest(
+      const [_, error] = await apiRequest(
         axios.post(
           `${server}/api/v1/users/sendfriendrequest?q=${userId}`,
           {},
           { withCredentials: true }
         )
       );
-      console.log(data, error);
       return error ? false : true;
     },
 
@@ -220,21 +216,18 @@ console.log("fetching contacts")
     },
 
     handleFriendRequest: async (requestId, accept) => {
-      const [data, error] = await apiRequest(
+      const [_, error] = await apiRequest(
         axios.post(
           `${server}/api/v1/users/respondfriendrequest`,
           { requestId, accept },
           { withCredentials: true }
         )
       );
-
-console.log("handleFriendRequest:: ", data, error)
-
       return error ? false : true;
     },
 
     leaveGroup: async (chatId, newCreatorId = null) => {
-      const [data, error] = await apiRequest(
+      const [_, error] = await apiRequest(
         axios.patch(
           `${server}/api/v1/chats/leavegroup`,
           { chatId, newCreatorId },
@@ -242,7 +235,6 @@ console.log("handleFriendRequest:: ", data, error)
         )
       );
 
-      console.log("leaveGroup::", data, error);
       return error ? false : true;
     },
   }))

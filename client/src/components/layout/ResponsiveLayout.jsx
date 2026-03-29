@@ -1,4 +1,3 @@
-// components/layout/ResponsiveAppLayout.jsx
 import { useState, useEffect } from 'react';
 import AppLayout from './AppLayout.jsx';  // Your desktop layout
 import MobileAppLayout from './MobileAppLayout.jsx';  // The new mobile layout

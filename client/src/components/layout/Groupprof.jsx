@@ -33,7 +33,7 @@ function Groupprof({ data, onlineUsers = [], unreadCount = 0 }) {
                 <div className='relative'>
                     <img src={groupChat ? avatar?.url || '../../../image.png' : otherUser?.avatar?.url}
                         className=" w-10 h-10  rounded-full object-cover" />
-                    {!groupChat && onlineUsers.includes(otherUser._id) && <Dot className='absolute right-4 bottom-3' size={30} strokeWidth={3} color='#5dbb63' />}
+                    {!groupChat && onlineUsers.includes(otherUser._id) && <Dot className='absolute right-5 bottom-5' size={30} strokeWidth={3} color='#5dbb63' />}
                     {groupChat && <span className='absolute right-0 top-6 rounded-full w-4 h-4 text-sm text-primary flex justify-center items-center bg-[#B1B1B1]'>#</span>}
                 </div>
 

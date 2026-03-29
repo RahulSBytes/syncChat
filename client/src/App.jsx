@@ -32,7 +32,7 @@ const GeneralTab = lazy(() => import("./components/settings/tabs/GeneralTab"));
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/">
-      {/* Main app routes with responsive layout */}
+     
       <Route element={<ProtectRoute><ResponsiveLayout /></ProtectRoute>}>
         <Route index element={<Home />} />
         <Route path="chats/:id" element={<Chats />} />
@@ -46,13 +46,11 @@ const router = createBrowserRouter(
         <Route path="general" element={<GeneralTab />} />
       </Route>
 
-      {/* Auth routes */}
       <Route path="/auth">
         <Route path="login" element={<Login />} />
         <Route path="signup" element={<Signup />} />
       </Route>
 
-      {/* Admin routes */}
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<Dashboard />} />
         <Route path="chats" element={<ChatManagement />} />

@@ -1,4 +1,3 @@
-// settings/components/MobileHeader.jsx
 import { ChevronLeft, Menu, X } from 'lucide-react';
 
 export default function MobileHeader({ onBack, mobileMenuOpen, setMobileMenuOpen }) {

@@ -1,10 +1,9 @@
-// store/usePreferencesStore.js
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import axios from "axios";
 import { apiRequest } from "../helpers/helpers.js";
 import { server } from "../constants/config";
-import { useAuthStore } from "./authStore"; // ✅ ADD THIS IMPORT
+import { useAuthStore } from "./authStore"; 
 import { useChatStore } from "./chatStore";
 
 const usePreferencesStore = create(
@@ -12,7 +11,6 @@ const usePreferencesStore = create(
     (set, get) => ({
       preferences: null,
 
-      // Update password
       updatePassword: async (passwordData) => {
         const [data, error] = await apiRequest(
           axios.patch(`${server}/api/v1/preferences/password`, passwordData, {
@@ -45,9 +43,7 @@ const usePreferencesStore = create(
 
         set({ preferences: data.preferences });
 
-        // Apply settings only if they exist
         if (data?.preferences) {
-          // Apply theme
           if (data.preferences.appearance?.theme) {
             document.documentElement.classList.toggle(
               "dark",
@@ -55,7 +51,6 @@ const usePreferencesStore = create(
             );
           }
 
-          // Apply font size
           if (data.preferences.appearance?.fontSize) {
             document.documentElement.style.setProperty(
               "--font-size",
@@ -63,7 +58,6 @@ const usePreferencesStore = create(
             );
           }
 
-          // ✅ FIX: Use data.preferences.accentColor instead of settings
           if (data.preferences.accentColor) {
             document.documentElement.style.setProperty(
               "--accent-color",
@@ -75,9 +69,8 @@ const usePreferencesStore = create(
         return true;
       },
 
-      // Update appearance
       updateAppearance: async (settings) => {
-        const [data, error] = await apiRequest(
+        const [_, error] = await apiRequest(
           axios.patch(`${server}/api/v1/preferences/appearance`, settings, {
             withCredentials: true,
           })
@@ -93,11 +86,9 @@ const usePreferencesStore = create(
         }));
 
         if (settings.theme) {
-          // ✅ Update darkMode in chatStore
           const isDark = settings.theme === "dark";
           useChatStore.getState().setDarkMode(isDark);
 
-          // ✅ Update DOM
           document.documentElement.classList.toggle("dark", isDark);
         }
 
@@ -115,18 +106,15 @@ const usePreferencesStore = create(
         try {
           const formData = new FormData();
 
-          // Add text fields if they exist in settings
           if (settings.fullName) formData.append("fullName", settings.fullName);
           if (settings.username) formData.append("username", settings.username);
           if (settings.bio !== undefined) formData.append("bio", settings.bio);
           if (settings.email) formData.append("email", settings.email);
 
-          // Add avatar file if it's a File object
           if (settings.avatar instanceof File) {
             formData.append("avatar", settings.avatar);
           }
 
-          // Make API call
           const { data } = await axios.patch(
             `${server}/api/v1/preferences/profile`,
             formData,
@@ -137,7 +125,6 @@ const usePreferencesStore = create(
           );
 
           if (data.success) {
-            // Update preferences store
             set((state) => ({
               preferences: {
                 ...state.preferences,
@@ -149,7 +136,6 @@ const usePreferencesStore = create(
               },
             }));
 
-            // ✅ Use the new updateUser method
             useAuthStore.getState().updateUser(data.user);
 
             return true;
@@ -164,7 +150,7 @@ const usePreferencesStore = create(
 
       // Update privacy
       updatePrivacy: async (settings) => {
-        const [data, error] = await apiRequest(
+        const [_, error] = await apiRequest(
           axios.patch(`${server}/api/v1/preferences/privacy`, settings, {
             withCredentials: true,
           })
@@ -182,9 +168,8 @@ const usePreferencesStore = create(
         return true;
       },
 
-      // Update general settings
       updateGeneralSettings: async (settings) => {
-        const [data, error] = await apiRequest(
+        const [_, error] = await apiRequest(
           axios.patch(`${server}/api/v1/preferences/general`, settings, {
             withCredentials: true,
           })
@@ -199,7 +184,7 @@ const usePreferencesStore = create(
           },
         }));
 
-        // Apply accent color if changed
+        
         if (settings.accentColor) {
           document.documentElement.style.setProperty(
             "--accent-color",
@@ -210,9 +195,9 @@ const usePreferencesStore = create(
         return true;
       },
 
-      // Toggle single setting
+
       toggleSetting: async (key, value) => {
-        const [data, error] = await apiRequest(
+        const [_, error] = await apiRequest(
           axios.patch(
             `${server}/api/v1/preferences/toggle`,
             { [key]: value },
@@ -234,7 +219,6 @@ const usePreferencesStore = create(
         return true;
       },
 
-      // Reset to defaults
       resetPreferences: async () => {
         const [data, error] = await apiRequest(
           axios.post(`${server}/api/v1/preferences/reset`, null, {
@@ -246,7 +230,6 @@ const usePreferencesStore = create(
 
         set({ preferences: data.preferences });
 
-        // Reapply defaults
         document.documentElement.classList.toggle(
           "dark",
           data.preferences.appearance.theme === "dark"
@@ -258,13 +241,11 @@ const usePreferencesStore = create(
         return true;
       },
 
-      // ===== HELPER METHODS =====
 
       getPreference: (key) => {
         const prefs = get().preferences;
         if (!prefs) return null;
 
-        // Handle nested keys like 'appearance.theme'
         const keys = key.split(".");
         let value = prefs;
         for (const k of keys) {

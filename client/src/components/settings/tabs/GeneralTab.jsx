@@ -1,4 +1,3 @@
-// settings/tabs/GeneralTab.jsx
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Bell, Volume2 } from 'lucide-react';
@@ -9,7 +8,7 @@ import ToggleSwitch from '../components/shared/ToggleSwitch.jsx';
 
 export default function GeneralTab() {
 
-  if(true) return <div className='text-secondary dark:text-secondary-dark text-center'>This section is currently being improved. Updates will be available soon.</div>
+  // if(true) return <div className='text-secondary dark:text-secondary-dark text-center'>This section is currently being improved. Updates will be available soon.</div>
 
 
   const { preferences, fetchPreferences, updateGeneralSettings } = usePreferencesStore();

@@ -10,7 +10,7 @@ import SettingItem from '../components/shared/SettingItem.jsx';
 export default function AppearanceTab() {
 
 
-  if(true) return <div className='text-secondary dark:text-secondary-dark text-center'>This section is currently being improved. Updates will be available soon.</div>
+  // if(true) return <div className='text-secondary dark:text-secondary-dark text-center'>This section is currently being improved. Updates will be available soon.</div>
 
 
   const { preferences, fetchPreferences, updateAppearance } = usePreferencesStore();
@@ -69,10 +69,10 @@ export default function AppearanceTab() {
         >
           <select
             {...register('theme')}
-            className="bg-[#404040] rounded-lg px-3 md:px-4 py-2 text-white 
+            className="bg-zinc-600 rounded-lg px-3 md:px-4 py-2 border border-red-600  text-white 
               focus:outline-none focus:border-[#248f60] transition-colors"
           >
-            <option value="dark">Dark</option>
+            <option value="dark" >Dark</option>
             <option value="light">Light</option>
           </select>
         </SettingItem>
@@ -84,7 +84,7 @@ export default function AppearanceTab() {
         >
           <select
             {...register('fontSize')}
-            className="bg-[#404040] rounded-lg px-3 md:px-4 py-2 text-white 
+            className="bg-zinc-600 rounded-lg px-3 md:px-4 py-2 text-white 
               focus:outline-none focus:border-[#248f60] transition-colors"
           >
             <option value="small">Small</option>

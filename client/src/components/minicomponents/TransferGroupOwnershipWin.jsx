@@ -1,7 +1,6 @@
 import { X } from 'lucide-react'
 import React from 'react'
 import { useState } from 'react'
-import { useApiStore } from '../../store/apiStore.js'
 
 export default function TransferGroupOwnershipWin({ selectedChatInfo, setGrpOwnerWin, handleOwnerChange }) {
 

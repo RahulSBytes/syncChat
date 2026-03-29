@@ -21,17 +21,16 @@ function GlobalSocketHandler() {
   const user = useAuthStore((state) => state.user);
   const currentSelectedChatId = useChatStore((state) => state.currentSelectedChatId);
   
-  // ✅ Get methods from your API store
+
   const { 
     addMessageFromSocket, 
     updateMessageStatuses, 
-    updateContactUnreadCount,
+    
     updateMessageDeletionFromSocket,
     updateContactsList,
     fetchContact,
     incrementUnreadCount,  
     setUnreadCount,  
-    resetUnreadCount,  
     updateChat,
   } = useApiStore();
 
@@ -41,20 +40,19 @@ function GlobalSocketHandler() {
       const isMyMessage = data.sender._id === user?._id;
       const isCurrentChat = data.chat === currentSelectedChatId;
       
-      // ✅ ALWAYS mark as delivered (even if chat not open)
+      
       if (!isMyMessage) {
         try {
-          const res = await axios.put(
+         await axios.put(
             `${server}/api/v1/chats/delivered/${data.chat}`,
             {},
             { withCredentials: true }
           );
         } catch (err) {
-          console.error("❌ Mark delivered error:", err);
+          console.error("Mark delivered error:", err);
         }
       }
       
-      // ✅ Handle UI updates
       if (isCurrentChat) {
         addMessageFromSocket(data);
         
@@ -68,18 +66,18 @@ function GlobalSocketHandler() {
           }, 1000);
         }
       } else {
-        // ✅ Message for different chat - increment unread
+        // Message for different chat - increment unread
         if (!isMyMessage) {
           incrementUnreadCount(data.chat);
         }
       }
     },
 
-    [MESSAGE_DELIVERED]: ({ chatId, messageIds, deliveredBy }) => {
+    [MESSAGE_DELIVERED]: ({ messageIds}) => {
       updateMessageStatuses(messageIds, "delivered");
     },
 
-    [MESSAGE_READ]: ({ chatId, messageIds, readBy }) => {
+    [MESSAGE_READ]: ({ messageIds }) => {
       updateMessageStatuses(messageIds, "read");
     },
 

@@ -26,14 +26,14 @@ export default function Settings() {
 
   const { register, watch, setValue, handleSubmit, reset, formState: { errors } } = useForm({
     defaultValues: {
-      // Profile
+      
       fullName: 'John Doe',
       username: 'johndoe',
       bio: 'Hey there! I am using this chat app.',
       email: 'john.doe@gmail.com',
       avatar: null,
 
-      // Appearance
+      
       theme: 'dark',
       fontSize: 'medium',
       chatWallpaper: null,
@@ -41,13 +41,13 @@ export default function Settings() {
       accentColor: '#0084ff',
       timeFormat: '12h',
 
-      // Privacy
+      
       profilePhotoVisibility: 'everyone',
       onlineStatusVisibility: 'everyone',
       typingIndicator: true,
       lastSeenVisible: true,
 
-      // General
+      
       notificationsEnabled: true,
       tickSound: true,
       enterToSend: true,
@@ -69,7 +69,7 @@ export default function Settings() {
   useEffect(() => {
     if (preferences) {
       reset({
-        // Keep profile data (would come from user API)
+        
         fullName: preferences.fullName || 'John Doe',
         username: preferences.username || 'johndoe',
         bio: preferences.bio || 'Hey there! I am using this chat app.',
@@ -166,7 +166,7 @@ export default function Settings() {
       alert('New passwords do not match!');
       return;
     }
-    console.log('Password changed');
+    
     setShowPasswordModal(false);
     passwordForm.reset();
     alert('Password changed successfully!');

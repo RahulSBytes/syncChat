@@ -21,6 +21,7 @@ export const useAuthStore = create((set) => ({
     );
 
     if (error) {
+      console.log("dataaa ::",error, data)
       set({ error, loader: false });
       return { status: false, message: error.message };
     }

@@ -1,4 +1,3 @@
-// hooks/useAutoMarkRead.js
 import { useEffect, useRef } from 'react';
 import axios from 'axios';
 import { server } from '../constants/config.js';
